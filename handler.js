@@ -48,16 +48,30 @@ module.exports.receive = (event, context, callback) => {
         var data_first_name = parambyname('first_name', "http://localhost/?" + event.body);
         var data_last_name = parambyname('last_name', "http://localhost/?" + event.body);
         var data_email = parambyname('email', "http://localhost/?" + event.body);
-        if (emptyStringCheck(headers_http_hmac)) {
-          // TODO: Check HMAC
-          response['statusCode'] = 200;
-          response['body'] = JSON.stringify({
-            message: "Received"
-          });
+        if (emptyStringCheck(data_ipn_mode) && emptyStringCheck(data_ipn_version) && emptyStringCheck(data_ipn_id) && emptyStringCheck(data_merchant)) {
+          if (data_ipn_mode == "hmac") {
+            if (emptyStringCheck(headers_http_hmac)) {
+              // TODO: Check HMAC
+              response['statusCode'] = 200;
+              response['body'] = JSON.stringify({
+                message: "Received"
+              });
+            } else {
+              response['statusCode'] = 401;
+              response['body'] = JSON.stringify({
+                message: "Invalid Authentication Headers"
+              });
+            }
+          } else {
+            response['statusCode'] = 401;
+            response['body'] = JSON.stringify({
+              message: "Invalid Authentication type"
+            });
+          }
         } else {
-          response['statusCode'] = 401;
+          response['statusCode'] = 400;
           response['body'] = JSON.stringify({
-            message: "Invalid Authentication Headers"
+            message: "Missing the following parameters: ipn_mode, ipn_id, merchant, ipn_version"
           });
         }
       } else {
