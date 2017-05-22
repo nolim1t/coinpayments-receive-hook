@@ -41,6 +41,11 @@ module.exports.receive = (event, context, callback) => {
         if (emptyStringCheck(data_ipn_mode) && emptyStringCheck(data_ipn_version) && emptyStringCheck(data_ipn_id) && emptyStringCheck(data_merchant)) {
           if (data_ipn_mode == "hmac") {
             if (emptyStringCheck(headers_http_hmac)) {
+              console.log("HMAC Mode request");
+              console.log(headers_http_hmac);
+              console.log("ipn_id: " + data_ipn_id + " merchant: " + data_merchant);
+              if (emptyStringCheck(data_currency) && emptyStringCheck(data_amount)) console.log("Currency: " + data_currency.toString() + " Amount: " + data_amount.toString());
+              if (emptyStringCheck(data_txn_id)) console.log("TXN ID: " + data_txn_id.toString());
               // TODO: Check HMAC
               response['statusCode'] = 200;
               response['body'] = JSON.stringify({
